@@ -1,0 +1,9 @@
+#:schema ../../schemas/json/pyproject.json
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+mcp_transport = "stdio"
+mcp_timeout = 45.0
+mcp_startup_timeout = "15"
+mcp_snapshot_update = "yes"
+mcp_eval_drift_fdr_method = "anchored_by"
+mcp_eval_drift_fdr_q = 0.05

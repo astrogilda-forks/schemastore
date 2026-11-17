@@ -1,0 +1,6 @@
+#:schema ../../schemas/json/pyproject.json
+[tool.pytest]
+mcp_transport = "streamable_http"
+mcp_timeout = 30
+mcp_snapshot_update = false
+mcp_eval_drift_fdr_method = "by"

@@ -1,0 +1,1202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://json.schemastore.org/partial-mcp-test-toolkit.json",
+  "title": "mcp-test-toolkit pytest options",
+  "description": "The mcp_* options of the mcp-test-toolkit pytest plugin, in [tool.pytest.ini_options] (pytest 6 and later) or directly in [tool.pytest] (pytest 9 and later) of pyproject.toml.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "tool": {
+      "type": "object",
+      "properties": {
+        "pytest": {
+          "$ref": "#/definitions/Pytest"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Pytest": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ConfigOptions"
+        }
+      ],
+      "properties": {
+        "ini_options": {
+          "$ref": "#/definitions/IniOptions"
+        }
+      }
+    },
+    "IniOptions": {
+      "$comment": "additionalProperties is true because the options merge with pytest's and other plugins'",
+      "description": "mcp-test-toolkit options in [tool.pytest.ini_options].",
+      "type": "object",
+      "properties": {
+        "mcp_transport": {
+          "type": "string",
+          "description": "Transport: memory, stdio, streamable_http, sse (default: memory). Environment variable: MCP_TEST_TOOLKIT_TRANSPORT.",
+          "default": "memory",
+          "enum": ["memory", "stdio", "streamable_http", "sse"]
+        },
+        "mcp_server_url": {
+          "type": ["string", "null"],
+          "description": "URL for streamable_http/sse transport (e.g. http://localhost:8080/mcp). Environment variable: MCP_TEST_TOOLKIT_SERVER_URL.",
+          "default": null
+        },
+        "mcp_server_command": {
+          "type": ["string", "null"],
+          "description": "Command for stdio transport (e.g. 'python -m my_server'). Environment variable: MCP_TEST_TOOLKIT_SERVER_COMMAND.",
+          "default": null
+        },
+        "mcp_timeout": {
+          "description": "Default timeout in seconds for MCP operations (default: 30).",
+          "default": 30.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_startup_timeout": {
+          "description": "Server startup timeout in seconds (default: 10).",
+          "default": 10.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_snapshot_update": {
+          "description": "Update schema snapshots instead of comparing.",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_security_scan_timeout": {
+          "description": "Security scan timeout in seconds (default: 120).",
+          "default": 120.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_security_fail_on": {
+          "type": "string",
+          "description": "Severity at which a security finding with no detector rule fails the run; a detector rule is decided by default-gate membership, never by this (default: HIGH).",
+          "default": "HIGH",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "mcp_security_promote_to_gating": {
+          "type": "string",
+          "description": "Comma-separated check ids that fail the security gate whatever their severity, e.g. STATIC-003,STATIC-006 to fail CI on a tool with no MCP safety annotations (default: none). An unknown or model-judged id is refused. Environment variable: MCP_TEST_TOOLKIT_SECURITY_PROMOTE_TO_GATING.",
+          "default": ""
+        },
+        "mcp_mcpwn_path": {
+          "type": ["string", "null"],
+          "description": "Path to mcpwn.py script for security scanning.",
+          "default": null
+        },
+        "mcp_enable_mcp_scan": {
+          "description": "Enable MCP-Scan/Snyk Agent Scan (requires SNYK_TOKEN).",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_scan_encoded_credentials": {
+          "description": "Run the STATIC-033 decode-then-scan lane (decode base64/hex/etc candidate tokens and match the recovered plaintext) so an author-encoded hardcoded secret is caught (default: True). Disable via mcp_scan_encoded_credentials = false in pyproject.toml.",
+          "default": true,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_security_suppressions": {
+          "type": ["string", "null"],
+          "description": "Path to JSON suppressions file for false-positive management.",
+          "default": null
+        },
+        "mcp_security_max_schema_depth": {
+          "description": "Maximum JSON Schema nesting depth for STATIC-004 (default: 15, OWASP).",
+          "default": 15,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_enable_sca": {
+          "description": "Enable the OSV-Scanner software-composition-analysis crawl.",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_sca_target_path": {
+          "type": ["string", "null"],
+          "description": "Directory or lockfile OSV-Scanner scans; required when enable_sca is set (no default).",
+          "default": null
+        },
+        "mcp_eval_model": {
+          "type": ["string", "null"],
+          "description": "LLM model for eval judge (e.g. 'ollama/deepseek-r1'). Environment variable: MCP_TEST_TOOLKIT_EVAL_MODEL.",
+          "default": null
+        },
+        "mcp_eval_tier": {
+          "type": "string",
+          "description": "Eval strategy tier (default: deterministic). Environment variable: MCP_TEST_TOOLKIT_EVAL_TIER.",
+          "default": "deterministic",
+          "enum": ["deterministic", "cached", "live"]
+        },
+        "mcp_eval_cache_path": {
+          "type": "string",
+          "description": "Path to JSONL eval response cache (default: .eval_cache.jsonl).",
+          "default": ".eval_cache.jsonl"
+        },
+        "mcp_eval_disable_durability": {
+          "description": "Disable os.fdatasync() on JSONL store writes. Matches deepeval DEEPEVAL_DISABLE_DURABILITY / rsyslog sync / syslog-ng reliable(yes) / Braintrust BRAINTRUST_SYNC_FLUSH inverse polarity (default False preserves durability; True trades crash safety for throughput on hot-path caches). See DEC-216. Environment variable: MCP_TEST_TOOLKIT_DISABLE_DURABILITY.",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_record": {
+          "description": "Record fresh LLM responses to eval cache during LIVE tier.",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_min_f1": {
+          "description": "Minimum composite F1 score for eval assertions (default: 0.0).",
+          "default": 0.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_fail_on": {
+          "type": "string",
+          "description": "Minimum severity for deterministic eval findings to fail (default: MEDIUM).",
+          "default": "MEDIUM",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "mcp_eval_max_tools": {
+          "description": "Skip O(n^2) pairwise checks when tool count exceeds threshold (default: 500, 0=disable).",
+          "default": 500,
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_num_samples": {
+          "description": "Number of LLM calls per case for statistical evaluation. >1 enables pass@k mode (default: 1).",
+          "default": 1,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_pass_at_k": {
+          "description": "The k in pass@k -- probability of passing in at least k of n attempts (default: 1).",
+          "default": 1,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_pass_threshold": {
+          "description": "Per-run composite score threshold for marking a run as a pass (default: 0.5).",
+          "default": 0.5,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_golden_path": {
+          "type": "string",
+          "description": "Path to JSONL golden baseline file (default: .eval_golden.jsonl).",
+          "default": ".eval_golden.jsonl"
+        },
+        "mcp_eval_golden_update": {
+          "description": "Bless current eval results as golden baselines (analogous to --snapshot-update).",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_baseline_reset": {
+          "description": "Require an explicit planned CAS reset action; retain old epochs and golden references.",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_baseline_regression_threshold": {
+          "description": "Score delta threshold for REGRESSION status.  When golden - actual exceeds this value, the metric is regressed (default: 0.05).",
+          "default": 0.05,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_baseline_regression_per_metric_thresholds": {
+          "type": ["string", "null"],
+          "description": "Per-metric override mapping for the regression threshold (DEC-291); comma-separated ``metric_name=threshold`` pairs (e.g. \"f1=0.05,output_similarity=0.10\"), each in [0.0, 1.0].",
+          "default": null
+        },
+        "mcp_eval_baseline_output_similarity_threshold": {
+          "description": "ngram_similarity cutoff for output matching in compare_to_baseline.  Below this value the diff is classified OUTPUT_CHANGED (default: 0.85).",
+          "default": 0.85,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_regression_metrics": {
+          "type": ["string", "null"],
+          "description": "Which score metrics trigger REGRESSION.  Leave unset/empty to monitor every metric (the default, matching evidently and nannyml peer-corpus convention).  Comma-separated list (e.g. \"composite,f1\") restricts to named metrics only.",
+          "default": null
+        },
+        "mcp_eval_score_metric_missing_policy": {
+          "type": "string",
+          "description": "Policy when a golden metric is absent from actual scores.  \"raise\" = hard fail; \"emit_finding\" = separate finding (default); \"coerce_zero\" = default to 0.0 (legacy).",
+          "default": "emit_finding",
+          "enum": ["raise", "emit_finding", "coerce_zero"]
+        },
+        "mcp_eval_baseline_missing_policy": {
+          "type": "string",
+          "description": "Policy when a case_id has no entry in the golden baseline store. \"emit\" = INFO finding (default, matches syrupy / jest-snapshot / insta / approvaltests); \"silent\" = legacy empty-list return; \"error\" = raise at the first un-blessed case.",
+          "default": "emit",
+          "enum": ["emit", "silent", "error"]
+        },
+        "mcp_eval_drift_method": {
+          "type": "string",
+          "description": "Autocorrelation-correction strategy: \"sigma_inflation\" (default, lightweight VIF) or \"prewhiten\" (AR(1) residuals, requires statsmodels). Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_METHOD.",
+          "default": "sigma_inflation",
+          "enum": ["sigma_inflation", "prewhiten"]
+        },
+        "mcp_eval_drift_min_samples": {
+          "description": "Minimum sample count for EWMA / CUSUM / OLS alerting.  Below this, running variance is too noisy for reliable drift detection.",
+          "default": 10,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_ewma_lambda": {
+          "description": "EWMA smoothing factor in (0, 1].  Lower values smooth more aggressively.  Default 0.2 per Lucas & Saccucci 1990.",
+          "default": 0.2,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_sigma_mult": {
+          "description": "Z-multiplier for EWMA / across-batch control limits.  Default 2.962, the exact Lucas-Saccucci 1990 Table 3 tabulated value for (lambda=0.2, ARL0=500).",
+          "default": 2.962,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_cusum_k": {
+          "description": "CUSUM reference value (k) in sigma units.  Default 0.5 per Montgomery 2012.",
+          "default": 0.5,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_cusum_h": {
+          "description": "CUSUM decision interval (h) in sigma units.  Default 4.0 (one-sided ARL0 ~ 339 per Siegmund 1985).",
+          "default": 4.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_pii_scan": {
+          "description": "Scan tool responses, agent outputs, and trace payloads for PII during eval orchestration and emit EVAL-Q-PII findings (default: True, severity INFO -- monitor-first per DEC-211). Disable via mcp_eval_pii_scan = false in pyproject.toml.",
+          "default": true,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_pii_severity": {
+          "type": "string",
+          "description": "Severity for EVAL-Q-PII findings when eval_pii_scan is True (default: INFO).",
+          "default": "INFO",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "mcp_eval_pii_skip_tools": {
+          "type": "string",
+          "description": "Comma-separated tool names to skip during PII scanning \u2014 for tools that produce numeric-heavy output (calculators, database queries) where PII patterns have high false-positive rates.",
+          "default": ""
+        },
+        "mcp_eval_pii_phone_enabled": {
+          "description": "Enable the phone number pattern in PII scanning (off by default due to 20-40% FP rate on MCP tool outputs per DEC-211 F3 research).",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_load_concurrency": {
+          "description": "Number of concurrent virtual users for load tests (default: 10).",
+          "default": 10,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_load_duration": {
+          "description": "Load test duration in seconds (default: 30).",
+          "default": 30.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_load_session_mode": {
+          "type": "string",
+          "description": "Session management strategy: reuse, per_request, pool, churn (default: pool).",
+          "default": "pool",
+          "enum": ["reuse", "per_request", "pool", "churn"]
+        },
+        "mcp_load_max_p99": {
+          "description": "Maximum p99 latency threshold in ms (default: 0 = report-only).",
+          "default": 0.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_load_churn_ops": {
+          "description": "CHURN mode: rotate session after N operations (default: 0 = no limit).",
+          "default": 0,
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_mcpdrill_path": {
+          "type": ["string", "null"],
+          "description": "Path to mcpdrill Go binary for distributed load testing.",
+          "default": null
+        },
+        "mcp_security_extended_profile": {
+          "description": "Opt in to the security-extended detector profile per DEC-323 (CodeQL-selector-contract governance).  When True, judge-assisted detectors (engine=llm_judge, engine=llm_primary) and experimental rules participate in the scan; default-profile installs (False) keep the L1/L2 execution path network-egress-free.",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_security_probe_values": {
+          "description": "Opt in to the runtime toxic-flow gate's value-tagging stage.  When True, the gate scans each observed tool response and tags a tool that returned a credential or personal data as a sensitive read, so a benignly-worded source (a token in a field named 'data') enters the flow analysis its schema-name hid it from.  Read-only and monotone; default False keeps the name-based behaviour.",
+          "default": false,
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*(?:[yY](?:[eE][sS])?|[tT](?:[rR][uU][eE])?|[oO][nN]|1|[nN][oO]?|[fF](?:[aA][lL][sS][eE])?|[oO][fF][fF]|0)[\\t\\n\\v\\f\\r\\u001c-\\u001f \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_llm_detector_token_budget": {
+          "description": "Cumulative input+output token budget for the LLM-primary detector across one scan run (per-run scope per the CodeQL --ram-per-`database analyze` precedent; default ~$0.05 at gpt-5-mini list price).  Exhaustion raises LLMDetectorBudgetExceededError mid-scan; the downstream policy (mcp_llm_budget_exhaust_policy) decides whether to degrade-and-continue or hard-fail.",
+          "default": 100000,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_llm_budget_exhaust_policy": {
+          "type": "string",
+          "description": "HYBRID budget-exhaust policy: \"degrade\" (default; emit a STATIC-032 degraded-coverage marker and continue scanning remaining tools \u2014 TruffleHog --results=unknown precedent), \"hard_fail\" (re-raise the exception; upper layer exits non-zero with structured-error JSON \u2014 CodeQL exit-100 precedent).",
+          "default": "degrade",
+          "enum": ["degrade", "hard_fail"]
+        },
+        "mcp_security_layer3_filter": {
+          "type": "string",
+          "description": "Opt-in L3 ML false-positive filter (STATIC-034): \"off\" (default) passes Layer-2 credential findings through unfiltered; \"on\" annotates benign-context findings as ToolNoise suppressions via the hosted ML backend (POSTs the candidate text to mcp_security_layer3_filter_endpoint; the model runs server-side and never ships in the wheel).  Off by default even under security_extended_profile per DEC-323 default-gate determinism.",
+          "default": "off",
+          "enum": ["off", "on"]
+        },
+        "mcp_security_layer3_filter_endpoint": {
+          "type": "string",
+          "description": "Hosted endpoint URL for the opt-in L3 ML false-positive filter (used only when mcp_security_layer3_filter is \"on\").  The model runs on the configured service and never ships in the wheel; candidate text is POSTed with the cached signed license lease, obtained with `mcp-testing auth <key>`.  No hosted endpoint is provided by default.  An empty value degrades the enabled filter to a STATIC-034 coverage marker.",
+          "default": ""
+        },
+        "mcp_security_schema_pins_path": {
+          "type": "string",
+          "description": "Path to the JSON file storing TOFU schema pins for inputSchema drift detection (default: .mcp_schema_pins.json). Environment variable: MCP_TEST_TOOLKIT_SCHEMA_PINS.",
+          "default": ".mcp_schema_pins.json"
+        },
+        "mcp_security_schema_pin_mode": {
+          "type": "string",
+          "description": "TOFU schema-pin enforcement mode: \"off\" (disabled), \"warn\" (MEDIUM finding on drift, default), \"fail\" (HIGH finding on drift). Environment variable: MCP_TEST_TOOLKIT_SCHEMA_PIN_MODE.",
+          "default": "warn",
+          "enum": ["off", "warn", "fail"]
+        },
+        "mcp_observer_timeout_seconds": {
+          "description": "Per-observer soft timeout in seconds.  An observer that does not complete within this many seconds is treated as one consecutive failure and counts toward the observer_circuit_breaker_threshold.  Default 1.0s; raise to 5.0s or higher for underpowered CI runners.  Set to 0 to disable timeout enforcement entirely (opt-out path: observer runs directly on the dispatch thread, useful when an in-process debugger is breakpointing inside an observer).  Enforcement uses a bounded ThreadPoolExecutor with a sliced Future.result poll loop \u2014 Ctrl-C latency is capped at the 50ms poll-slice duration regardless of observer hang time. Environment variable: MCP_TEST_TOOLKIT_OBSERVER_TIMEOUT_SECONDS.",
+          "default": 1.0,
+          "anyOf": [
+            {
+              "type": "number",
+              "minimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_observer_pool_max_workers": {
+          "description": "Maximum number of concurrent observer threads in the bounded ThreadPoolExecutor used for pytest_mcp_finding_emitted dispatch.  Default 4 matches the typical xdist -n auto worker count on developer laptops; raise for high-throughput CI environments with many parallel test workers and registered observers.  Observers that time out occupy a slot until they return naturally; if all slots fill, further dispatches receive POOL_SATURATED and count toward the circuit breaker.  Ignored when observer_timeout_seconds=0 (opt-out path bypasses the pool entirely). Environment variable: MCP_TEST_TOOLKIT_OBSERVER_POOL_MAX_WORKERS.",
+          "default": 4,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_observer_circuit_breaker_threshold": {
+          "description": "Consecutive-failure count at which a misbehaving observer hookimpl is skipped for the rest of the session.  Default 5; compliance-grade suites may want to lower this to fail-fast. Environment variable: MCP_TEST_TOOLKIT_OBSERVER_CIRCUIT_BREAKER_THRESHOLD.",
+          "default": 5,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_fdr_method": {
+          "type": "string",
+          "description": "Finite detector\u00d7case correction: BY by default; anchored_by keeps all BY rejections; bh/e_bh refuse. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_FDR_METHOD.",
+          "default": "by",
+          "enum": ["bh", "by", "e_bh", "anchored_by"]
+        },
+        "mcp_eval_drift_fdr_q": {
+          "description": "Pointwise FDR target for the complete registered detector\u00d7case family; must match the pre-data plan. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_FDR_Q.",
+          "default": 0.05,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_sequential_mode": {
+          "type": "string",
+          "description": "Repeated-look drift monitor: off (single registered look only), edetector_edbh (FDR <= q at stopping times with expected per-case observations <= H) or changepoint_ebh (FDR <= q at every stopping time). Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_MODE.",
+          "default": "off",
+          "enum": ["off", "edetector_edbh", "changepoint_ebh"]
+        },
+        "mcp_eval_drift_sequential_detector": {
+          "type": "string",
+          "description": "E-detector recursion for edetector_edbh: shiryaev_roberts or cusum; unused by other modes. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_DETECTOR.",
+          "default": "shiryaev_roberts",
+          "enum": ["shiryaev_roberts", "cusum"]
+        },
+        "mcp_eval_drift_sequential_horizon": {
+          "description": "Declared horizon H for edetector_edbh: the bound on the expected number of observations per case, Phase I included, when the monitor stops. e-d-BH runs at level q/H. Unused by other modes. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_HORIZON.",
+          "default": 1000,
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_sequential_q": {
+          "description": "FDR target over the registered case family at the reporting stopping time of the repeated-look monitor; distinct from the single-look detector-by-case q. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_Q.",
+          "default": 0.05,
+          "anyOf": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 1
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?(?:[0-9](?:_?[0-9])*(?:\\.(?:[0-9](?:_?[0-9])*)?)?|\\.[0-9](?:_?[0-9])*)(?:[eE][+-]?[0-9](?:_?[0-9])*)?[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_eval_drift_max_records": {
+          "description": "Maximum active drift observations; 0 disables pruning. The actual registered provider archives older source generations without resetting baselines, epochs or inference. Full replay remains linear. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_MAX_RECORDS.",
+          "default": 0,
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "string",
+              "pattern": "^[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[+-]?[0-9](?:_?[0-9])*[\\t\\n\\v\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$"
+            }
+          ]
+        },
+        "mcp_gate_trigger_allow": {
+          "description": "Comma-separated list of entry-point plugin names permitted to contribute additional gate-trigger paths via the ``mcp_test_toolkit.gate_triggers`` entry-point group.  Default empty \u2014 no third-party autoload at 1.0.",
+          "default": [],
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "mcp_skill_bundle": {
+          "type": ["string", "null"],
+          "description": "Path to the Agent Skill bundles under test: a SKILL.md file, or a directory tree in which every SKILL.md beneath it is checked.  Unset, the skill_bundle fixture looks for a 'skills' directory and then a '.claude/skills' directory under the rootdir. Environment variable: MCP_SKILL_BUNDLE.",
+          "default": null
+        }
+      },
+      "additionalProperties": true
+    },
+    "ConfigOptions": {
+      "$comment": "additionalProperties is true because the options merge with pytest's and other plugins'",
+      "description": "mcp-test-toolkit options directly in [tool.pytest] (pytest 9+).",
+      "type": "object",
+      "properties": {
+        "mcp_transport": {
+          "type": "string",
+          "description": "Transport: memory, stdio, streamable_http, sse (default: memory). Environment variable: MCP_TEST_TOOLKIT_TRANSPORT.",
+          "default": "memory",
+          "enum": ["memory", "stdio", "streamable_http", "sse"]
+        },
+        "mcp_server_url": {
+          "type": ["string", "null"],
+          "description": "URL for streamable_http/sse transport (e.g. http://localhost:8080/mcp). Environment variable: MCP_TEST_TOOLKIT_SERVER_URL.",
+          "default": null
+        },
+        "mcp_server_command": {
+          "type": ["string", "null"],
+          "description": "Command for stdio transport (e.g. 'python -m my_server'). Environment variable: MCP_TEST_TOOLKIT_SERVER_COMMAND.",
+          "default": null
+        },
+        "mcp_timeout": {
+          "type": "number",
+          "description": "Default timeout in seconds for MCP operations (default: 30).",
+          "default": 30.0,
+          "exclusiveMinimum": 0
+        },
+        "mcp_startup_timeout": {
+          "type": "number",
+          "description": "Server startup timeout in seconds (default: 10).",
+          "default": 10.0,
+          "exclusiveMinimum": 0
+        },
+        "mcp_snapshot_update": {
+          "type": "boolean",
+          "description": "Update schema snapshots instead of comparing.",
+          "default": false
+        },
+        "mcp_security_scan_timeout": {
+          "type": "number",
+          "description": "Security scan timeout in seconds (default: 120).",
+          "default": 120.0,
+          "exclusiveMinimum": 0
+        },
+        "mcp_security_fail_on": {
+          "type": "string",
+          "description": "Severity at which a security finding with no detector rule fails the run; a detector rule is decided by default-gate membership, never by this (default: HIGH).",
+          "default": "HIGH",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "mcp_security_promote_to_gating": {
+          "type": "string",
+          "description": "Comma-separated check ids that fail the security gate whatever their severity, e.g. STATIC-003,STATIC-006 to fail CI on a tool with no MCP safety annotations (default: none). An unknown or model-judged id is refused. Environment variable: MCP_TEST_TOOLKIT_SECURITY_PROMOTE_TO_GATING.",
+          "default": ""
+        },
+        "mcp_mcpwn_path": {
+          "type": ["string", "null"],
+          "description": "Path to mcpwn.py script for security scanning.",
+          "default": null
+        },
+        "mcp_enable_mcp_scan": {
+          "type": "boolean",
+          "description": "Enable MCP-Scan/Snyk Agent Scan (requires SNYK_TOKEN).",
+          "default": false
+        },
+        "mcp_scan_encoded_credentials": {
+          "type": "boolean",
+          "description": "Run the STATIC-033 decode-then-scan lane (decode base64/hex/etc candidate tokens and match the recovered plaintext) so an author-encoded hardcoded secret is caught (default: True). Disable via mcp_scan_encoded_credentials = false in pyproject.toml.",
+          "default": true
+        },
+        "mcp_security_suppressions": {
+          "type": ["string", "null"],
+          "description": "Path to JSON suppressions file for false-positive management.",
+          "default": null
+        },
+        "mcp_security_max_schema_depth": {
+          "type": "integer",
+          "description": "Maximum JSON Schema nesting depth for STATIC-004 (default: 15, OWASP).",
+          "default": 15,
+          "exclusiveMinimum": 0
+        },
+        "mcp_enable_sca": {
+          "type": "boolean",
+          "description": "Enable the OSV-Scanner software-composition-analysis crawl.",
+          "default": false
+        },
+        "mcp_sca_target_path": {
+          "type": ["string", "null"],
+          "description": "Directory or lockfile OSV-Scanner scans; required when enable_sca is set (no default).",
+          "default": null
+        },
+        "mcp_eval_model": {
+          "type": ["string", "null"],
+          "description": "LLM model for eval judge (e.g. 'ollama/deepseek-r1'). Environment variable: MCP_TEST_TOOLKIT_EVAL_MODEL.",
+          "default": null
+        },
+        "mcp_eval_tier": {
+          "type": "string",
+          "description": "Eval strategy tier (default: deterministic). Environment variable: MCP_TEST_TOOLKIT_EVAL_TIER.",
+          "default": "deterministic",
+          "enum": ["deterministic", "cached", "live"]
+        },
+        "mcp_eval_cache_path": {
+          "type": "string",
+          "description": "Path to JSONL eval response cache (default: .eval_cache.jsonl).",
+          "default": ".eval_cache.jsonl"
+        },
+        "mcp_eval_disable_durability": {
+          "type": "boolean",
+          "description": "Disable os.fdatasync() on JSONL store writes. Matches deepeval DEEPEVAL_DISABLE_DURABILITY / rsyslog sync / syslog-ng reliable(yes) / Braintrust BRAINTRUST_SYNC_FLUSH inverse polarity (default False preserves durability; True trades crash safety for throughput on hot-path caches). See DEC-216. Environment variable: MCP_TEST_TOOLKIT_DISABLE_DURABILITY.",
+          "default": false
+        },
+        "mcp_eval_record": {
+          "type": "boolean",
+          "description": "Record fresh LLM responses to eval cache during LIVE tier.",
+          "default": false
+        },
+        "mcp_eval_min_f1": {
+          "type": "number",
+          "description": "Minimum composite F1 score for eval assertions (default: 0.0).",
+          "default": 0.0,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mcp_eval_fail_on": {
+          "type": "string",
+          "description": "Minimum severity for deterministic eval findings to fail (default: MEDIUM).",
+          "default": "MEDIUM",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "mcp_eval_max_tools": {
+          "type": "integer",
+          "description": "Skip O(n^2) pairwise checks when tool count exceeds threshold (default: 500, 0=disable).",
+          "default": 500,
+          "minimum": 0
+        },
+        "mcp_eval_num_samples": {
+          "type": "integer",
+          "description": "Number of LLM calls per case for statistical evaluation. >1 enables pass@k mode (default: 1).",
+          "default": 1,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_pass_at_k": {
+          "type": "integer",
+          "description": "The k in pass@k -- probability of passing in at least k of n attempts (default: 1).",
+          "default": 1,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_pass_threshold": {
+          "type": "number",
+          "description": "Per-run composite score threshold for marking a run as a pass (default: 0.5).",
+          "default": 0.5,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mcp_eval_golden_path": {
+          "type": "string",
+          "description": "Path to JSONL golden baseline file (default: .eval_golden.jsonl).",
+          "default": ".eval_golden.jsonl"
+        },
+        "mcp_eval_golden_update": {
+          "type": "boolean",
+          "description": "Bless current eval results as golden baselines (analogous to --snapshot-update).",
+          "default": false
+        },
+        "mcp_eval_baseline_reset": {
+          "type": "boolean",
+          "description": "Require an explicit planned CAS reset action; retain old epochs and golden references.",
+          "default": false
+        },
+        "mcp_eval_baseline_regression_threshold": {
+          "type": "number",
+          "description": "Score delta threshold for REGRESSION status.  When golden - actual exceeds this value, the metric is regressed (default: 0.05).",
+          "default": 0.05,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mcp_eval_baseline_regression_per_metric_thresholds": {
+          "type": ["string", "null"],
+          "description": "Per-metric override mapping for the regression threshold (DEC-291); comma-separated ``metric_name=threshold`` pairs (e.g. \"f1=0.05,output_similarity=0.10\"), each in [0.0, 1.0].",
+          "default": null
+        },
+        "mcp_eval_baseline_output_similarity_threshold": {
+          "type": "number",
+          "description": "ngram_similarity cutoff for output matching in compare_to_baseline.  Below this value the diff is classified OUTPUT_CHANGED (default: 0.85).",
+          "default": 0.85,
+          "minimum": 0,
+          "maximum": 1
+        },
+        "mcp_eval_regression_metrics": {
+          "type": ["string", "null"],
+          "description": "Which score metrics trigger REGRESSION.  Leave unset/empty to monitor every metric (the default, matching evidently and nannyml peer-corpus convention).  Comma-separated list (e.g. \"composite,f1\") restricts to named metrics only.",
+          "default": null
+        },
+        "mcp_eval_score_metric_missing_policy": {
+          "type": "string",
+          "description": "Policy when a golden metric is absent from actual scores.  \"raise\" = hard fail; \"emit_finding\" = separate finding (default); \"coerce_zero\" = default to 0.0 (legacy).",
+          "default": "emit_finding",
+          "enum": ["raise", "emit_finding", "coerce_zero"]
+        },
+        "mcp_eval_baseline_missing_policy": {
+          "type": "string",
+          "description": "Policy when a case_id has no entry in the golden baseline store. \"emit\" = INFO finding (default, matches syrupy / jest-snapshot / insta / approvaltests); \"silent\" = legacy empty-list return; \"error\" = raise at the first un-blessed case.",
+          "default": "emit",
+          "enum": ["emit", "silent", "error"]
+        },
+        "mcp_eval_drift_method": {
+          "type": "string",
+          "description": "Autocorrelation-correction strategy: \"sigma_inflation\" (default, lightweight VIF) or \"prewhiten\" (AR(1) residuals, requires statsmodels). Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_METHOD.",
+          "default": "sigma_inflation",
+          "enum": ["sigma_inflation", "prewhiten"]
+        },
+        "mcp_eval_drift_min_samples": {
+          "type": "integer",
+          "description": "Minimum sample count for EWMA / CUSUM / OLS alerting.  Below this, running variance is too noisy for reliable drift detection.",
+          "default": 10,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_drift_ewma_lambda": {
+          "type": "number",
+          "description": "EWMA smoothing factor in (0, 1].  Lower values smooth more aggressively.  Default 0.2 per Lucas & Saccucci 1990.",
+          "default": 0.2,
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "mcp_eval_drift_sigma_mult": {
+          "type": "number",
+          "description": "Z-multiplier for EWMA / across-batch control limits.  Default 2.962, the exact Lucas-Saccucci 1990 Table 3 tabulated value for (lambda=0.2, ARL0=500).",
+          "default": 2.962,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_drift_cusum_k": {
+          "type": "number",
+          "description": "CUSUM reference value (k) in sigma units.  Default 0.5 per Montgomery 2012.",
+          "default": 0.5,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_drift_cusum_h": {
+          "type": "number",
+          "description": "CUSUM decision interval (h) in sigma units.  Default 4.0 (one-sided ARL0 ~ 339 per Siegmund 1985).",
+          "default": 4.0,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_pii_scan": {
+          "type": "boolean",
+          "description": "Scan tool responses, agent outputs, and trace payloads for PII during eval orchestration and emit EVAL-Q-PII findings (default: True, severity INFO -- monitor-first per DEC-211). Disable via mcp_eval_pii_scan = false in pyproject.toml.",
+          "default": true
+        },
+        "mcp_eval_pii_severity": {
+          "type": "string",
+          "description": "Severity for EVAL-Q-PII findings when eval_pii_scan is True (default: INFO).",
+          "default": "INFO",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "mcp_eval_pii_skip_tools": {
+          "type": "string",
+          "description": "Comma-separated tool names to skip during PII scanning \u2014 for tools that produce numeric-heavy output (calculators, database queries) where PII patterns have high false-positive rates.",
+          "default": ""
+        },
+        "mcp_eval_pii_phone_enabled": {
+          "type": "boolean",
+          "description": "Enable the phone number pattern in PII scanning (off by default due to 20-40% FP rate on MCP tool outputs per DEC-211 F3 research).",
+          "default": false
+        },
+        "mcp_load_concurrency": {
+          "type": "integer",
+          "description": "Number of concurrent virtual users for load tests (default: 10).",
+          "default": 10,
+          "exclusiveMinimum": 0
+        },
+        "mcp_load_duration": {
+          "type": "number",
+          "description": "Load test duration in seconds (default: 30).",
+          "default": 30.0,
+          "exclusiveMinimum": 0
+        },
+        "mcp_load_session_mode": {
+          "type": "string",
+          "description": "Session management strategy: reuse, per_request, pool, churn (default: pool).",
+          "default": "pool",
+          "enum": ["reuse", "per_request", "pool", "churn"]
+        },
+        "mcp_load_max_p99": {
+          "type": "number",
+          "description": "Maximum p99 latency threshold in ms (default: 0 = report-only).",
+          "default": 0.0,
+          "minimum": 0
+        },
+        "mcp_load_churn_ops": {
+          "type": "integer",
+          "description": "CHURN mode: rotate session after N operations (default: 0 = no limit).",
+          "default": 0,
+          "minimum": 0
+        },
+        "mcp_mcpdrill_path": {
+          "type": ["string", "null"],
+          "description": "Path to mcpdrill Go binary for distributed load testing.",
+          "default": null
+        },
+        "mcp_security_extended_profile": {
+          "type": "boolean",
+          "description": "Opt in to the security-extended detector profile per DEC-323 (CodeQL-selector-contract governance).  When True, judge-assisted detectors (engine=llm_judge, engine=llm_primary) and experimental rules participate in the scan; default-profile installs (False) keep the L1/L2 execution path network-egress-free.",
+          "default": false
+        },
+        "mcp_security_probe_values": {
+          "type": "boolean",
+          "description": "Opt in to the runtime toxic-flow gate's value-tagging stage.  When True, the gate scans each observed tool response and tags a tool that returned a credential or personal data as a sensitive read, so a benignly-worded source (a token in a field named 'data') enters the flow analysis its schema-name hid it from.  Read-only and monotone; default False keeps the name-based behaviour.",
+          "default": false
+        },
+        "mcp_llm_detector_token_budget": {
+          "type": "integer",
+          "description": "Cumulative input+output token budget for the LLM-primary detector across one scan run (per-run scope per the CodeQL --ram-per-`database analyze` precedent; default ~$0.05 at gpt-5-mini list price).  Exhaustion raises LLMDetectorBudgetExceededError mid-scan; the downstream policy (mcp_llm_budget_exhaust_policy) decides whether to degrade-and-continue or hard-fail.",
+          "default": 100000,
+          "exclusiveMinimum": 0
+        },
+        "mcp_llm_budget_exhaust_policy": {
+          "type": "string",
+          "description": "HYBRID budget-exhaust policy: \"degrade\" (default; emit a STATIC-032 degraded-coverage marker and continue scanning remaining tools \u2014 TruffleHog --results=unknown precedent), \"hard_fail\" (re-raise the exception; upper layer exits non-zero with structured-error JSON \u2014 CodeQL exit-100 precedent).",
+          "default": "degrade",
+          "enum": ["degrade", "hard_fail"]
+        },
+        "mcp_security_layer3_filter": {
+          "type": "string",
+          "description": "Opt-in L3 ML false-positive filter (STATIC-034): \"off\" (default) passes Layer-2 credential findings through unfiltered; \"on\" annotates benign-context findings as ToolNoise suppressions via the hosted ML backend (POSTs the candidate text to mcp_security_layer3_filter_endpoint; the model runs server-side and never ships in the wheel).  Off by default even under security_extended_profile per DEC-323 default-gate determinism.",
+          "default": "off",
+          "enum": ["off", "on"]
+        },
+        "mcp_security_layer3_filter_endpoint": {
+          "type": "string",
+          "description": "Hosted endpoint URL for the opt-in L3 ML false-positive filter (used only when mcp_security_layer3_filter is \"on\").  The model runs on the configured service and never ships in the wheel; candidate text is POSTed with the cached signed license lease, obtained with `mcp-testing auth <key>`.  No hosted endpoint is provided by default.  An empty value degrades the enabled filter to a STATIC-034 coverage marker.",
+          "default": ""
+        },
+        "mcp_security_schema_pins_path": {
+          "type": "string",
+          "description": "Path to the JSON file storing TOFU schema pins for inputSchema drift detection (default: .mcp_schema_pins.json). Environment variable: MCP_TEST_TOOLKIT_SCHEMA_PINS.",
+          "default": ".mcp_schema_pins.json"
+        },
+        "mcp_security_schema_pin_mode": {
+          "type": "string",
+          "description": "TOFU schema-pin enforcement mode: \"off\" (disabled), \"warn\" (MEDIUM finding on drift, default), \"fail\" (HIGH finding on drift). Environment variable: MCP_TEST_TOOLKIT_SCHEMA_PIN_MODE.",
+          "default": "warn",
+          "enum": ["off", "warn", "fail"]
+        },
+        "mcp_observer_timeout_seconds": {
+          "type": "number",
+          "description": "Per-observer soft timeout in seconds.  An observer that does not complete within this many seconds is treated as one consecutive failure and counts toward the observer_circuit_breaker_threshold.  Default 1.0s; raise to 5.0s or higher for underpowered CI runners.  Set to 0 to disable timeout enforcement entirely (opt-out path: observer runs directly on the dispatch thread, useful when an in-process debugger is breakpointing inside an observer).  Enforcement uses a bounded ThreadPoolExecutor with a sliced Future.result poll loop \u2014 Ctrl-C latency is capped at the 50ms poll-slice duration regardless of observer hang time. Environment variable: MCP_TEST_TOOLKIT_OBSERVER_TIMEOUT_SECONDS.",
+          "default": 1.0,
+          "minimum": 0
+        },
+        "mcp_observer_pool_max_workers": {
+          "type": "integer",
+          "description": "Maximum number of concurrent observer threads in the bounded ThreadPoolExecutor used for pytest_mcp_finding_emitted dispatch.  Default 4 matches the typical xdist -n auto worker count on developer laptops; raise for high-throughput CI environments with many parallel test workers and registered observers.  Observers that time out occupy a slot until they return naturally; if all slots fill, further dispatches receive POOL_SATURATED and count toward the circuit breaker.  Ignored when observer_timeout_seconds=0 (opt-out path bypasses the pool entirely). Environment variable: MCP_TEST_TOOLKIT_OBSERVER_POOL_MAX_WORKERS.",
+          "default": 4,
+          "exclusiveMinimum": 0
+        },
+        "mcp_observer_circuit_breaker_threshold": {
+          "type": "integer",
+          "description": "Consecutive-failure count at which a misbehaving observer hookimpl is skipped for the rest of the session.  Default 5; compliance-grade suites may want to lower this to fail-fast. Environment variable: MCP_TEST_TOOLKIT_OBSERVER_CIRCUIT_BREAKER_THRESHOLD.",
+          "default": 5,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_drift_fdr_method": {
+          "type": "string",
+          "description": "Finite detector\u00d7case correction: BY by default; anchored_by keeps all BY rejections; bh/e_bh refuse. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_FDR_METHOD.",
+          "default": "by",
+          "enum": ["bh", "by", "e_bh", "anchored_by"]
+        },
+        "mcp_eval_drift_fdr_q": {
+          "type": "number",
+          "description": "Pointwise FDR target for the complete registered detector\u00d7case family; must match the pre-data plan. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_FDR_Q.",
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "mcp_eval_drift_sequential_mode": {
+          "type": "string",
+          "description": "Repeated-look drift monitor: off (single registered look only), edetector_edbh (FDR <= q at stopping times with expected per-case observations <= H) or changepoint_ebh (FDR <= q at every stopping time). Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_MODE.",
+          "default": "off",
+          "enum": ["off", "edetector_edbh", "changepoint_ebh"]
+        },
+        "mcp_eval_drift_sequential_detector": {
+          "type": "string",
+          "description": "E-detector recursion for edetector_edbh: shiryaev_roberts or cusum; unused by other modes. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_DETECTOR.",
+          "default": "shiryaev_roberts",
+          "enum": ["shiryaev_roberts", "cusum"]
+        },
+        "mcp_eval_drift_sequential_horizon": {
+          "type": "integer",
+          "description": "Declared horizon H for edetector_edbh: the bound on the expected number of observations per case, Phase I included, when the monitor stops. e-d-BH runs at level q/H. Unused by other modes. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_HORIZON.",
+          "default": 1000,
+          "exclusiveMinimum": 0
+        },
+        "mcp_eval_drift_sequential_q": {
+          "type": "number",
+          "description": "FDR target over the registered case family at the reporting stopping time of the repeated-look monitor; distinct from the single-look detector-by-case q. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_SEQUENTIAL_Q.",
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "mcp_eval_drift_max_records": {
+          "type": "integer",
+          "description": "Maximum active drift observations; 0 disables pruning. The actual registered provider archives older source generations without resetting baselines, epochs or inference. Full replay remains linear. Environment variable: MCP_TEST_TOOLKIT_EVAL_DRIFT_MAX_RECORDS.",
+          "default": 0,
+          "minimum": 0
+        },
+        "mcp_gate_trigger_allow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Comma-separated list of entry-point plugin names permitted to contribute additional gate-trigger paths via the ``mcp_test_toolkit.gate_triggers`` entry-point group.  Default empty \u2014 no third-party autoload at 1.0.",
+          "default": []
+        },
+        "mcp_skill_bundle": {
+          "type": ["string", "null"],
+          "description": "Path to the Agent Skill bundles under test: a SKILL.md file, or a directory tree in which every SKILL.md beneath it is checked.  Unset, the skill_bundle fixture looks for a 'skills' directory and then a '.claude/skills' directory under the rootdir. Environment variable: MCP_SKILL_BUNDLE.",
+          "default": null
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

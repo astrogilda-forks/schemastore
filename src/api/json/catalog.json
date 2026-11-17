@@ -7209,6 +7209,12 @@
       "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/partial-pytest.json"
     },
     {
+      "name": "partial-mcp-test-toolkit.json",
+      "description": "mcp-test-toolkit pytest plugin options in pyproject.toml",
+      "fileMatch": [],
+      "url": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/partial-mcp-test-toolkit.json"
+    },
+    {
       "name": "Qgoda",
       "description": "Qgoda static site generator configuration file format",
       "fileMatch": [

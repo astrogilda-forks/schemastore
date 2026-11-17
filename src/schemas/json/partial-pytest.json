@@ -22,6 +22,9 @@
             },
             {
               "$ref": "#/definitions/IniOptionsAsyncio"
+            },
+            {
+              "$ref": "partial-mcp-test-toolkit.json#/definitions/IniOptions"
             }
           ],
           "title": "INI-style pytest Configuration Options",
@@ -696,6 +699,9 @@
         },
         {
           "$ref": "#/definitions/ConfigOptionsAsyncio"
+        },
+        {
+          "$ref": "partial-mcp-test-toolkit.json#/definitions/ConfigOptions"
         }
       ],
       "not": {

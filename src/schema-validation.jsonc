@@ -1324,6 +1324,9 @@
     "pulumi.json": {
       "externalSchema": ["base.json"]
     },
+    "partial-pytest.json": {
+      "externalSchema": ["partial-mcp-test-toolkit.json"]
+    },
     "pyproject.json": {
       "externalSchema": [
         "hatch.json",
@@ -1333,6 +1336,7 @@
         "partial-dfc.json",
         "partial-fastapi.json",
         "partial-inwards.json",
+        "partial-mcp-test-toolkit.json",
         "partial-mypy.json",
         "partial-pdm.json",
         "partial-pdm-dockerize.json",
